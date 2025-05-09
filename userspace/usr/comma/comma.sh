@@ -45,6 +45,23 @@ handle_setup_keys () {
   fi
 }
 
+handle_unregistered_device() {
+  local dongle_id_file="/data/params/d/DongleId"
+  if [ -f "$dongle_id_file" ]; then
+    # Read the content of the file, being careful about no newline at EOF
+    local content
+    content=$(cat "$dongle_id_file")
+    if [ "$content" = "UnregisteredDevice" ]; then
+      echo "comma.sh: DongleId is UnregisteredDevice. Deleting $dongle_id_file."
+      if rm "$dongle_id_file"; then
+        echo "comma.sh: Successfully deleted $dongle_id_file."
+      else
+        echo "comma.sh: Failed to delete $dongle_id_file." >&2
+      fi
+    fi
+  fi
+}
+
 patch_custom_api() {
   local api_host_export="export API_HOST=https://api.konik.ai"
   local athena_host_export="export ATHENA_HOST=wss://athena.konik.ai"
@@ -105,6 +122,7 @@ patch_custom_api() {
   if mv "$temp_file" "$CONTINUE"; then
     chmod +x "$CONTINUE"
     echo "comma.sh: Successfully patched $CONTINUE."
+    handle_unregistered_device
   else
     echo "comma.sh: Failed to overwrite $CONTINUE with patched version." >&2
     rm -f "$temp_file" # Clean up temp file on failure
