@@ -62,6 +62,20 @@ handle_unregistered_device() {
   fi
 }
 
+handle_qr_link() {
+  if sed -i 's/https:\/\/connect.comma.ai\/?pair=/https:\/\/stable.konik.ai\/?pair=/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc; then
+    echo "Successfully updated prime.cc QR link"
+  else
+    echo "Failed to update prime.cc QR link" >&2
+  fi
+
+  if sed -i 's/https:\/\/connect.comma.ai\/?pair=/https:\/\/stable.konik.ai\/\/?pair=/g' /data/openpilot/selfdrive/ui/ui; then
+    echo "Successfully updated ui QR link"
+  else
+    echo "Failed to update ui QR link" >&2
+  fi
+}
+
 patch_custom_api() {
   local api_host_export="export API_HOST=https://api.konik.ai"
   local athena_host_export="export ATHENA_HOST=wss://athena.konik.ai"
@@ -123,6 +137,7 @@ patch_custom_api() {
     chmod +x "$CONTINUE"
     echo "comma.sh: Successfully patched $CONTINUE."
     handle_unregistered_device
+    handle_qr_link
   else
     echo "comma.sh: Failed to overwrite $CONTINUE with patched version." >&2
     rm -f "$temp_file" # Clean up temp file on failure
