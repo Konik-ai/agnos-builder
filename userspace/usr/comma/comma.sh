@@ -62,17 +62,19 @@ handle_unregistered_device() {
   fi
 }
 
-handle_qr_link() {
-  if sed -i 's/https:\/\/connect.comma.ai\/?pair=/https:\/\/stable.konik.ai\/?pair=/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc; then
-    echo "Successfully updated prime.cc QR link"
+handle_comma_konik() {
+  if sed -i 's/connect.comma.ai/connect.konik.ai/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc && \
+     sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc; then
+    echo "Successfully updated prime.cc"
   else
-    echo "Failed to update prime.cc QR link" >&2
+    echo "Failed to update prime.cc" >&2
   fi
 
-  if sed -i 's/https:\/\/connect.comma.ai\/?pair=/https:\/\/stable.konik.ai\/\/?pair=/g' /data/openpilot/selfdrive/ui/ui; then
-    echo "Successfully updated ui QR link"
+  if sed -i 's/connect.comma.ai/connect.konik.ai/g' /data/openpilot/selfdrive/ui/ui && \
+     sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/ui; then
+    echo "Successfully updated ui"
   else
-    echo "Failed to update ui QR link" >&2
+    echo "Failed to update ui" >&2
   fi
 }
 
@@ -137,7 +139,7 @@ patch_custom_api() {
     chmod +x "$CONTINUE"
     echo "comma.sh: Successfully patched $CONTINUE."
     handle_unregistered_device
-    handle_qr_link
+    handle_comma_konik
   else
     echo "comma.sh: Failed to overwrite $CONTINUE with patched version." >&2
     rm -f "$temp_file" # Clean up temp file on failure
