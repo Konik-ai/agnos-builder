@@ -7,7 +7,7 @@ cd $DIR
 
 # Constants
 OTA_DIR="$DIR/../output/ota"
-DATA_ACCOUNT="comma"
+DATA_ACCOUNT="konik"
 
 OTA_JSON="$OTA_DIR/agnos.json"
 DATA_CONTAINER="agnosupdate"

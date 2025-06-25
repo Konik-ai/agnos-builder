@@ -20,8 +20,8 @@ SECTOR_SIZE = 4096
 with open(ROOT / "VERSION", 'r') as f:
     VERSION = f.read().rstrip('\n')
 
-AGNOS_UPDATE_URL = os.getenv("AGNOS_UPDATE_URL", "https://r2.openpilot.my.id/agnosupdate/"+VERSION)
-# AGNOS_STAGING_UPDATE_URL = os.getenv("AGNOS_STAGING_UPDATE_URL", "https://r2.openpilot.my.id/agnosupdate-staging")
+AGNOS_UPDATE_URL = os.getenv("AGNOS_UPDATE_URL", "https://storage.konik.ai/agnosupdate/"+VERSION)
+# AGNOS_STAGING_UPDATE_URL = os.getenv("AGNOS_STAGING_UPDATE_URL", "https://storage.konik.ai/agnosupdate-staging")
 
 GPT = namedtuple('GPT', ['lun', 'name', 'path', 'start_sector', 'num_sectors', 'has_ab', 'ota', 'full_check', 'sparse'])
 GPTS = [
