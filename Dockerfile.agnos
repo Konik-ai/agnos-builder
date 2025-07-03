@@ -1,12 +1,10 @@
+# check=error=true
+
 # ################## #
 # ###### Base ###### #
 # ################## #
 FROM scratch AS agnos-base
 ADD ubuntu-base-20.04.1-base-arm64.tar.gz /
-
-# Add aarch64 and arm support
-COPY --from=multiarch/qemu-user-static:x86_64-aarch64 /usr/bin/qemu-aarch64-static /usr/bin
-COPY --from=multiarch/qemu-user-static:x86_64-arm /usr/bin/qemu-arm-static /usr/bin
 
 # Build folder
 RUN mkdir -p /tmp/agnos
@@ -14,9 +12,7 @@ RUN mkdir -p /tmp/agnos
 # Stop on error
 RUN set -xe
 
-ENV USERNAME=comma
-ENV PASSWD=comma
-ENV HOST=comma
+ARG USERNAME=comma
 
 # Base system setup
 RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
@@ -26,7 +22,7 @@ RUN /tmp/agnos/base_setup.sh
 # ################## #
 # #### Compiler #### #
 # ################## #
-FROM agnos-base as agnos-compiler
+FROM agnos-base AS agnos-compiler
 
 RUN apt-get update && apt-get install --no-install-recommends checkinstall
 # Install openpilot dependencies, probably needed for build,
@@ -35,19 +31,19 @@ COPY ./userspace/openpilot_dependencies.sh /tmp/agnos/
 RUN /tmp/agnos/openpilot_dependencies.sh
 
 # Individual compiling images
-FROM agnos-compiler as agnos-compiler-capnp
+FROM agnos-compiler AS agnos-compiler-capnp
 COPY ./userspace/compile-capnp.sh /tmp/agnos/
 RUN /tmp/agnos/compile-capnp.sh
 
-FROM agnos-compiler as agnos-compiler-ffmpeg
+FROM agnos-compiler AS agnos-compiler-ffmpeg
 COPY ./userspace/compile-ffmpeg.sh /tmp/agnos/
 RUN /tmp/agnos/compile-ffmpeg.sh
 
-FROM agnos-compiler as agnos-compiler-mapbox-gl-native
+FROM agnos-compiler AS agnos-compiler-mapbox-gl-native
 COPY ./userspace/compile-mapbox-gl-native.sh /tmp/agnos/
 RUN /tmp/agnos/compile-mapbox-gl-native.sh
 
-FROM agnos-compiler as agnos-compiler-qtwayland5
+FROM agnos-compiler AS agnos-compiler-qtwayland5
 COPY ./userspace/compile-qtwayland5.sh /tmp/agnos/
 COPY ./userspace/qtwayland/patch /tmp/agnos/
 RUN /tmp/agnos/compile-qtwayland5.sh
