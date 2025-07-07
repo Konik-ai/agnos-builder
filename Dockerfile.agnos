@@ -97,6 +97,7 @@ RUN export PATH="/usr/local/pyenv/bin:/usr/local/pyenv/shims:$PATH" && \
     cd /tmp/agnos && \
     poetry config virtualenvs.prefer-active-python true --local && \
     poetry config virtualenvs.create false --local && \
+    pip install --upgrade pip setuptools wheel && \
     export PYOPENCL_CL_PRETEND_VERSION="2.0" && \
     export POETRY_VIRTUALENVS_CREATE=false && \
     MAKEFLAGS="-j$(nproc)" poetry install --no-cache --no-root && \
