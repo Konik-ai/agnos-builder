@@ -1,0 +1,38 @@
+[
+  {
+    "name": "sunnypilot",
+    "url": "https://staging.sunnypilot.ai"
+  },
+  {
+    "name": "FrogPilot",
+    "url": "https://frogpilot.download"
+  },
+  {
+    "name": "MoreTorque Openpilot",
+    "url": "https://smiskol.com/fork/moretore/mazda-frogpilot"
+  },
+  {
+    "name": "carrotpilot",
+    "url": "https://smiskol.com/fork/dhvms"
+  },
+  {
+    "name": "Retropilot",
+    "url": "https://installer.comma.ai/RetroPilot"
+  },
+  {
+    "name": "OPKR/Kisapilot",
+    "url": "https://opkr.o-r.kr/fork/opkr"
+  },
+  {
+    "name": "Xnor Openpilot",
+    "url": "https://installer.comma.ai/xnor-tech/sunny-mads-buttons-ui"
+  },
+  {
+    "name": "JvePilot",
+    "url": "https://bit.ly/jvePilot-release"
+  },
+  {
+    "name": "openpilot stock",
+    "url": "https://openpilot.comma.ai"
+  }
+]
