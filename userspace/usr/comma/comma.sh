@@ -76,6 +76,21 @@ handle_comma_konik() {
   else
     echo "Failed to update ui" >&2
   fi
+
+  # Update Python Raylib UI files
+  sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/widgets/pairing_dialog.py
+  sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/widgets/pairing_dialog.py
+
+  sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/layouts/settings/device.py
+  sed -i 's/comma prime offer/konik stable account/g' /data/openpilot/selfdrive/ui/layouts/settings/device.py
+  sed -i 's/comma connect/konik stable/g' /data/openpilot/selfdrive/ui/layouts/settings/device.py
+
+  sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/widgets/prime.py
+  sed -i 's/comma prime/konik stable/g' /data/openpilot/selfdrive/ui/widgets/prime.py
+
+  sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/widgets/setup.py
+  sed -i 's/comma prime offer/konik stable account/g' /data/openpilot/selfdrive/ui/widgets/setup.py
+  sed -i 's/comma connect/konik stable/g' /data/openpilot/selfdrive/ui/widgets/setup.py
 }
 
 patch_custom_api() {
