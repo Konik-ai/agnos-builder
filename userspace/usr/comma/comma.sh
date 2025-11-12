@@ -63,19 +63,11 @@ handle_unregistered_device() {
 }
 
 handle_comma_konik() {
-  if sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc && \
-     sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc; then
-    echo "Successfully updated prime.cc"
-  else
-    echo "Failed to update prime.cc" >&2
-  fi
+  sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc
+  sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc
 
-  if sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/ui && \
-     sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/ui; then
-    echo "Successfully updated ui"
-  else
-    echo "Failed to update ui" >&2
-  fi
+  sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/ui
+  sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/ui
 
   # Update Python Raylib UI files
   sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/widgets/pairing_dialog.py
