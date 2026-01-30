@@ -17,5 +17,5 @@ When modifying AGNOS, keep in mind that the system partition isn't
 particularly large. /data/ is the largest partition, and unlike the
 rest of the partitions, it will persist across AGNOS updates.
 
-Want a clean slate? Reflash AGNOS with https://flash.comma.ai.
+Want a clean slate? Reflash AGNOS with https://flash.konik.ai.
 EOF
