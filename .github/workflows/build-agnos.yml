@@ -19,7 +19,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-user-static curl xz-utils bsdutils kmod e2fsprogs dosfstools mtools simg2img android-sdk-libsparse-utils build-essential ca-certificates git pkg-config wget openssl
+          sudo apt-get install -y qemu-user-static curl xz-utils bsdutils kmod e2fsprogs dosfstools mtools android-sdk-libsparse-utils build-essential ca-certificates git pkg-config wget openssl
 
       - name: Download Ubuntu base tarball if missing
         run: |
