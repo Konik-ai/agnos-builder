@@ -1,0 +1,39 @@
+name: Build agnos-builder (arm64)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    name: Build on ARM64
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for multiarch, if needed)
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (arm64)
+        run: |
+          docker buildx build --platform linux/arm64 -f Dockerfile.agnos --progress plain --load -t agnos-builder:ci .
+
+      - name: List built images
+        run: docker images
+
+      # Optionally, save the image as an artifact (uncomment if needed)
+      # - name: Save Docker image as tarball
+      #   run: docker save agnos-builder:ci | gzip > agnos-builder-arm64.tar.gz
+      #
+      # - name: Upload image artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: agnos-builder-arm64
+      #     path: agnos-builder-arm64.tar.gz
