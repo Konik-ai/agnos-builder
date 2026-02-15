@@ -45,6 +45,110 @@ handle_setup_keys () {
   fi
 }
 
+handle_unregistered_device() {
+  local dongle_id_file="/data/params/d/DongleId"
+  if [ -f "$dongle_id_file" ]; then
+    # Read the content of the file, being careful about no newline at EOF
+    local content
+    content=$(cat "$dongle_id_file")
+    if [ "$content" = "UnregisteredDevice" ]; then
+      echo "comma.sh: DongleId is UnregisteredDevice. Deleting $dongle_id_file."
+      if rm "$dongle_id_file"; then
+        echo "comma.sh: Successfully deleted $dongle_id_file."
+      else
+        echo "comma.sh: Failed to delete $dongle_id_file." >&2
+      fi
+    fi
+  fi
+}
+
+handle_comma_konik() {
+  if sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc && \
+     sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/qt/widgets/prime.cc; then
+    echo "Successfully updated prime.cc"
+  else
+    echo "Failed to update prime.cc" >&2
+  fi
+
+  if sed -i 's/connect.comma.ai/stable.konik.ai\//g' /data/openpilot/selfdrive/ui/ui && \
+     sed -i 's/comma account/konik account/g' /data/openpilot/selfdrive/ui/ui; then
+    echo "Successfully updated ui"
+  else
+    echo "Failed to update ui" >&2
+  fi
+}
+
+patch_custom_api() {
+  local api_host_export="export API_HOST=https://api.konik.ai"
+  local athena_host_export="export ATHENA_HOST=wss://athena.konik.ai"
+
+  local api_exists=false
+  grep -qxF "$api_host_export" "$CONTINUE" && api_exists=true
+
+  local athena_exists=false
+  grep -qxF "$athena_host_export" "$CONTINUE" && athena_exists=true
+
+  if $api_exists && $athena_exists; then
+    return 0
+  fi
+
+  echo "comma.sh: Patching $CONTINUE with custom API hosts."
+  local temp_file
+  temp_file=$(mktemp)
+  if [ -z "$temp_file" ]; then
+    echo "comma.sh: Failed to create temp file for $CONTINUE modification." >&2
+    return 1
+  fi
+
+  local shebang=""
+  # Try to read the first line to capture shebang
+  if IFS= read -r first_line < "$CONTINUE"; then
+    if [[ "$first_line" == "#!"* ]]; then
+      shebang="$first_line"
+    fi
+  fi
+
+  # Write shebang to temp file if it exists
+  if [ -n "$shebang" ]; then
+    echo "$shebang" > "$temp_file"
+  fi
+
+  # Add the custom export lines, with blank lines for readability (similar to C++ logic)
+  echo "" >> "$temp_file"
+  echo "$api_host_export" >> "$temp_file"
+  echo "$athena_host_export" >> "$temp_file"
+
+  # Append the rest of the original script's content to the temp file,
+  # skipping the shebang (if already written) and any exact duplicates of the export lines.
+  local line_num=0
+  while IFS= read -r line; do
+    line_num=$((line_num + 1))
+    # Skip the first line if it was the shebang and we've already written it
+    if [ "$line_num" -eq 1 ] && [ -n "$shebang" ]; then
+      continue
+    fi
+    # Skip lines that are exact matches of what we just added
+    if [[ "$line" == "$api_host_export" ]] || [[ "$line" == "$athena_host_export" ]]; then
+      continue
+    fi
+    echo "$line" >> "$temp_file"
+  done < "$CONTINUE"
+
+  # Replace the original script with the modified version and ensure it's executable
+  if mv "$temp_file" "$CONTINUE"; then
+    chmod +x "$CONTINUE"
+    echo "comma.sh: Successfully patched $CONTINUE."
+    handle_unregistered_device
+    handle_comma_konik
+  else
+    echo "comma.sh: Failed to overwrite $CONTINUE with patched version." >&2
+    rm -f "$temp_file" # Clean up temp file on failure
+    return 1
+  fi
+
+  return 0
+}
+
 # factory reset handling
 if [ ! -f /tmp/booted ]; then
   touch /tmp/booted
@@ -78,6 +182,10 @@ ln -s /data/tmp/vscode-server ~/.windsurf-server
 while true; do
   pkill -f "$SETUP"
   handle_setup_keys
+
+  if [ -f "$CONTINUE" ]; then
+    patch_custom_api
+  fi
 
   if [ -f $CONTINUE ]; then
     exec "$CONTINUE"
