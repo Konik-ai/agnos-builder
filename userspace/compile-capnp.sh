@@ -6,14 +6,7 @@ VERSION=1.0.2
 apt-get update && apt-get install -yq --no-install-recommends \
     libc6-dev \
     libssl-dev \
-    zlib1g-dev \
-    python3-pip \
-    python3-markupsafe \
-    python3-mako
-
-# Upgrade pip and ensure Python modules are present
-pip3 install --upgrade pip
-pip3 install markupsafe mako
+    zlib1g-dev
 
 # Build capnproto
 cd /tmp
